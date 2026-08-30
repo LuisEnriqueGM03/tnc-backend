@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tnc-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME:-tnc_app}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD es obligatoria en .env}
+      POSTGRES_DB: ${DATABASE_NAME:-tnc_discordgang}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tnc-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-tnc_app} -d ${DATABASE_NAME:-tnc_discordgang}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tnc-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    networks:
+      - tnc-network
+      - cloudflare_tunnel
+
+volumes:
+  postgres_data:
+    name: tnc_postgres_data
+
+networks:
+  tnc-network:
+    name: tnc-network
+    driver: bridge
+  cloudflare_tunnel:
+    external: true

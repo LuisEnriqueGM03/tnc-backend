@@ -1,0 +1,19 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Desplegar Backend en Servidor
+    runs-on: self-hosted
+    steps:
+      - name: Descargar Código
+        uses: actions/checkout@v4
+
+      - name: Reconstruir y Desplegar Contenedores
+        run: |
+          docker compose up -d --build --remove-orphans
+          docker image prune -f
