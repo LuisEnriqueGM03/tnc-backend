@@ -40,7 +40,6 @@ volumes:
 
 networks:
   tnc-network:
-    name: tnc-network
-    driver: bridge
+    external: true
   cloudflare_tunnel:
     external: true
