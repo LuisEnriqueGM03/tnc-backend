@@ -40,7 +40,10 @@ export default (): AppConfiguration => ({
     username: process.env.DATABASE_USERNAME ?? 'tnc_app',
     password: process.env.DATABASE_PASSWORD ?? '',
     database: process.env.DATABASE_NAME ?? 'tnc_discordgang',
-    synchronize: process.env.NODE_ENV !== 'production',
+    synchronize:
+      process.env.DATABASE_SYNCHRONIZE !== undefined
+        ? process.env.DATABASE_SYNCHRONIZE === 'true'
+        : true,
   },
   discord: {
     clientId: process.env.DISCORD_CLIENT_ID ?? '',
