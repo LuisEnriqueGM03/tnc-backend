@@ -52,6 +52,7 @@ export class AuthController {
         `${this.authService.frontendUrl}/api/auth/callback?token=${token}`,
       );
     } catch (err) {
+      console.error('Error en discordCallback:', err);
       const errorCode =
         err instanceof UnauthorizedException && err.message?.includes('State')
           ? 'state'
